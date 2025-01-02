@@ -1,199 +1,260 @@
-{% extends "headers.html" %}
 {% block content %}
-<!-- Main Content -->
-<main>
-  <div class="container">
-    <h1>Weather Information</h1>
-    <h5><b>Location:</b> {{weather_data['resolvedAddress']}}</h5>
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Current Weather Conditions</th>
-          <th>Max Temperature (in °C)</th>
-          <th>Min Temperature (in °C)</th>
-          <th>Precipitation Probability</th>
-          <th>Humidity</th>
-          <th>Weather Alerts</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for weather_data_item in weather_data['days'] %}
-        <tr>
-          <td>{{ weather_data_item['datetime'] }}</td>
-          <td>{{ weather_data_item['conditions'] }}</td>
-          <td>{{ weather_data_item['tempmax'] }}</td>
-          <td>{{ weather_data_item['tempmin'] }}</td>
-          <td>{{ weather_data_item['precipprob'] }}</td>
-          <td>{{ weather_data_item['humidity'] }}</td>
-          <td>{{ weather_data_item['description'] }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  <div class="container">
-    <!-- Paragraph of plan with markdown syntax -->
-    <h1>Planned Itinerary</h1>
-    <code><h6>
-            **This is a tentative itinerary, so please be flexible, it may have
-            some mistakes.
-          </h6></code>
+<!DOCTYPE html>
+<html lang="en">
 
-    <div id="markdown-content">{{ plan }}</div>
-  </div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather and Itinerary</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOMz6j5eqJUsJ4EY2zVBl6mQe+niJz36IogYdbZo" crossorigin="anonymous">
+    <style>
+        /* Body styling */
+        body {
+            background: linear-gradient(to bottom right, #2980b9, #6dd5fa); /* Gradient background using blue shades */
+            color: #fff; /* White text for contrast */
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow: visible; /* Allow overflow to see all content */
+        }
 
-  <!-- Hotels at Destination -->
-  <div class="md-4 pd container">
-    <h5>
-      For Hotels & Flight Booking:
-      <a style="text-decoration: none" href="https://www.booking.com" target="_blank">
-        <button type="button" class="btn btn-light">
-          Click Here
-        </button>
-      </a>
-    </h5>
-  </div>
-</main>
+        /* Heading styles */
+        h1,
+        h5 {
+            color: #ffffff; /* White text for contrast */
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.6);
+        }
 
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
 
-<!-- Share Icon -->
-<div class="floating-container">
-  <div class="floating-button">
-    <i class="fa-solid fa-share-from-square"></i>
-  </div>
-  <!-- Elements -->
-  <div class="element-container">
-    <!-- Facebook -->
-    <a class="float-element" href="https://www.facebook.com/sharer/sharer.php?u=https%3A//sanjeev02.pythonanywhere.com/"
-      target="_blank">
-      <span>
-        <i class="fa-brands fa-facebook"></i>
-    </a>
+        h5 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
 
-    <!-- WhatsApp -->
-    </span>
-    <a class="float-element"
-      href="https://api.whatsapp.com/send?text=Check%20out%20this%20page:%20https://sanjeev02.pythonanywhere.com"
-      target="_blank">
-      <span>
-        <i class="fa-brands fa-whatsapp"></i>
-      </span>
-    </a>
+        /* Table styling */
+        .table th {
+            background-color: #1abc9c; /* Teal for table header */
+            color: white;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
 
-    <!-- Twitter or X -->
-    <a class="float-element"
-      href="https://twitter.com/intent/tweet?text=Check%20out%20this%20page:%20https://sanjeev02.pythonanywhere.com"
-      target="_blank">
-      <span>
-        <i class="fa-brands fa-x-twitter"></i>
-      </span>
-    </a>
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #ecf0f1; /* Light gray for odd rows */
+        }
 
-    <!-- LinkedIn -->
-    <a class="float-element"
-      href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//sanjeev02.pythonanywhere.com" target="_blank">
-      <span>
-        <i class="fa-brands fa-linkedin"></i>
-      </span>
-    </a>
+        .table-striped tbody tr:nth-of-type(even) {
+            background-color: #bdc3c7; /* Gray for even rows */
+        }
 
-    <!-- Telegram -->
-    <a class="float-element"
-      href="https://t.me/share?url=https%3A%2F%2Fsanjeev02.pythonanywhere.com%2F&text=Check%20this%20out"
-      target="_blank">
-      <span>
-        <i class="fa-brands fa-telegram"></i>
-      </span>
-    </a>
-    <!-- Download -->
-    <button id="download" class="float-element">
-      <span>
-        <i class="fa-solid fa-download"></i>
-      </span>
-    </button>
-  </div>
-</div>
+        .table td,
+        .table th {
+            color: #34495e; /* Darker text for table cells */
+            text-align: center;
+            font-size: 1rem;
+            padding: 10px;
+        }
 
+        /* Button styling */
+        .btn-light {
+            background-color: #f39c12; /* Bright orange */
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+            font-size: 16px;
+        }
 
-<!-- Footer -->
-<footer class="jumbotron text-center text-white fixed-bottom" style="background-color: #030303;">
-  <!-- Copyright -->
-  <div class="text-center p-3" style="background-color: rgba(255, 255, 255, 0)">
-    <p>&copy {{now.year}} Copyright</p>
-    <p>
-      Made With 🩷 By
-      <a style="color: #0ed9ddd6; text-decoration: none" href="#">Sanjeev</a>
-    </p>
-  </div>
-</footer>
+        .btn-light:hover {
+            background-color: #e67e22; /* Darker orange on hover */
+        }
 
-<!-- Download libraries -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
-  integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
-  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<!-- 
-    This script sets a timeout function to remove all elements with the class "alert" after a certain duration. 
-    It first sets the opacity of the elements to 0 to initiate the transition, and then removes the elements after the transition duration. 
-    The delay for the transition duration can be adjusted by changing the value of the second setTimeout function. 
-    -->
-<script>
-  setTimeout(function () {
-    const alerts = document.querySelectorAll(".alert");
+        /* Container styling */
+        .container {
+            background-color: rgba(255, 255, 255, 0.9); /* Slight transparency for background */
+            border-radius: 12px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin: 20px;
+            width: 95%; /* Maximize width */
+            max-width: 1200px; /* Limit max width */
+            margin-bottom: 40px;
+            overflow: hidden;
+            background: linear-gradient(to bottom right, #3498db, #9b59b6); /* Blue and purple gradient */
+            color: white;
+        }
 
-    alerts.forEach(function (alert) {
-      // Set opacity to 0 to initiate the transition
-      alert.style.opacity = 0;
-    });
+        /* Download container */
+        .download-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px; /* Space between text and button */
+            margin: 40px 0; /* Increased margin for visual separation */
+        }
 
-    // After the transition duration, remove the alert elements
-    setTimeout(function () {
-      alerts.forEach(function (alert) {
-        alert.style.display = "none";
-      });
-    }, 1000); // Adjust this delay to match your transition duration (in this case, 1 second)
-  }, 5000);
-</script>
+        #download {
+            background-color: #8e44ad; /* Vibrant purple */
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
 
-<!-- This script tag includes the markdown-it library from the specified CDN. -->
-<script src="https://cdn.jsdelivr.net/npm/markdown-it@11.0.1/dist/markdown-it.min.js"></script>
+        #download:hover {
+            background-color: #9b59b6; /* Lighter purple on hover */
+        }
 
-<!-- This script creates a Markdown parser, converts the Markdown text to HTML, and inserts the converted HTML into the document. The Markdown text is obtained from an element with the ID "markdown-content". -->
-<script>
-  // Create a Markdown parser
-  const md = window.markdownit();
+        /* Footer styling */
+        footer.jumbotron {
+            background-color: #34495e; /* Dark footer background */
+            width: 100%;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: auto;
+        }
 
-  // Convert the Markdown text to HTML
-  const html = md.render(
-    document.getElementById("markdown-content").textContent
-  );
+        .footer-text {
+            color: #ecf0f1;
+            font-size: 14px;
+        }
 
-  // Insert the converted HTML into the document
-  document.getElementById("markdown-content").innerHTML = html;
-  // pdf of itinerary
-  document.getElementById('download').addEventListener('click', function() {
-    var element = document.querySelector('main');
-    var opt = {
-      margin: 0.5,
-      filename: 'itinerary.pdf',
-      image: { type: 'png', quality: 100 },
-      html2canvas: { scale: 0.8 },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
-    };
+        /* Jumbotron for section background */
+        .jumbotron {
+            background-color: #2980b9; /* Section background */
+            color: white;
+            width: 100%;
+            padding: 20px;
+            margin: 0;
+            border-radius: 10px;
+            text-align: center;
+        }
 
-      html2pdf().set(opt).from(element).toPdf().get('pdf').then(function(pdf) {
-      var totalPages = pdf.internal.getNumberOfPages();
-      for (var i = 1; i <= totalPages; i++) {
-        // Set position and alignment of footer text
-        pdf.setPage(i);
-        pdf.text('Visit us at:"https://sanjeev02.pythonanywhere.com"', 0.2, pdf.internal.pageSize.height - 0.3);
-      }
-      pdf.save('itinerary.pdf');
-    });
-  });
+        /* Responsive styling */
+        @media (max-width: 768px) {
+            .container {
+                width: 90%; /* Adjust for smaller screens */
+            }
 
-</script>
-{% endblock %}
+            h1 {
+                font-size: 2rem;
+            }
+
+            h5 {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Weather Information</h1>
+        <h5><b>Location:</b> {{ weather_data['resolvedAddress'] if weather_data['resolvedAddress'] else 'Data not available' }}</h5>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Current Weather Conditions</th>
+                    <th>Max Temperature (°C)</th>
+                    <th>Min Temperature (°C)</th>
+                    <th>Precipitation Probability</th>
+                    <th>Humidity</th>
+                    <th>Weather Alerts</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for weather_data_item in weather_data['days'] %}
+                <tr>
+                    <td>{{ weather_data_item['datetime'] }}</td>
+                    <td>{{ weather_data_item['conditions'] }}</td>
+                    <td>{{ weather_data_item['tempmax'] }}</td>
+                    <td>{{ weather_data_item['tempmin'] }}</td>
+                    <td>{{ weather_data_item['precipprob'] }}</td>
+                    <td>{{ weather_data_item['humidity'] }}</td>
+                    <td>{{ weather_data_item['description'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="container">
+        <h1>Planned Itinerary</h1>
+        <code>
+            <h6>**This is a tentative itinerary, so please be flexible; it may have some mistakes.</h6>
+        </code>
+        <div id="markdown-content">{{ plan }}</div>
+    </div>
+
+    <div class="md-4 pd container">
+        <h5>For Hotels & Flight Booking:
+            <a style="text-decoration: none" href="https://www.booking.com" target="_blank">
+                <button type="button" class="btn btn-light">Click Here</button>
+            </a>
+        </h5>
+    </div>
+
+    <div class="download-container">
+        <h5 style="color: white;">Download your plan here:</h5>
+        <button id="download" class="float-element">Download Your Trip Here <i class="fas fa-download"></i></button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="jumbotron text-center text-white">
+        <div class="footer-text p-1">
+            <p>&copy; {{ now.year }} Made With 🩷 By <a style="color: #0ed9dd; text-decoration: none" href="#">HEMA</a></p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for PDF and Markdown Conversion -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/markdown-it@11.0.1/dist/markdown-it.min.js"></script>
+    <script>
+        const md = window.markdownit();
+        const html = md.render(document.getElementById("markdown-content").textContent);
+        document.getElementById("markdown-content").innerHTML = html;
+
+        document.getElementById('download').addEventListener('click', function () {
+            var element = document.querySelector('main'); // Ensure the correct element is selected
+            var opt = {
+                margin: 0.5,
+                filename: 'itinerary.pdf',
+                image: { type: 'png', quality: 100 },
+                html2canvas: { scale: 0.8 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+            };
+            html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
+                var totalPages = pdf.internal.getNumberOfPages();
+                for (var i = 1; i <= totalPages; i++) {
+                    pdf.setPage(i);
+                    pdf.text('Visit us at: "https://sanjeev02.pythonanywhere.com"', 0.2, pdf.internal.pageSize.height - 0.3);
+                }
+                pdf.save('itinerary.pdf'); // Save the PDF
+            });
+        });
+    </script>
+
 </body>
 
 </html>
+{% endblock %}

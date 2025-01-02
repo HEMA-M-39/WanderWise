@@ -1,77 +1,106 @@
-@import url("https://fonts.googleapis.com/css?family=Roboto");
+@import url("https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap");
 
+/* General font styling */
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Floating container */
 .floating-container {
     position: fixed;
     width: 65px;
     height: 65px;
     bottom: 20px;
     right: 20px;
-    z-index: 1380;
-    -webkit-transition: height 0.3s;
-    transition: height 0.3s;
-    }
-.floating-container:hover {
-  height: auto;
+    z-index: 999; /* Reduced z-index to avoid overlapping critical content */
+    transition: height 0.3s ease-in-out;
+    cursor: pointer;
 }
 
+.floating-container:hover {
+    height: auto;
+}
+
+/* Float elements smooth entry animation */
 .floating-container:hover .float-element {
-  -webkit-animation: come-in 0.5s ease forwards;
-          animation: come-in 0.5s ease forwards;
-  -webkit-transform: translatey(10px);
-          transform: translatey(10px);
-  opacity: 1;
-  -webkit-transition: all 0.3s;
-  transition: all 0.3s;
+    animation: come-in 0.5s ease forwards;
+    transform: translateY(10px);
+    opacity: 1;
+    transition: all 0.3s ease-in-out;
 }
 
 .floating-container .floating-button {
-  position: relative;
-  width: 65px;
-  height: 65px;
-  background: #2cb3f0;
-  bottom: 0;
-  border-radius: 50%;
-  margin: auto;
-  line-height: 65px;
-  text-align: center;
-  font-size: 23px;
-  z-index: 1380;
-  box-shadow: 0 10px 25px -5px rgba(44, 179, 240, 0.6);
-  cursor: pointer;
-  -webkit-transition: all 0.3s;
-  transition: all 0.3s;
+    position: relative;
+    width: 65px;
+    height: 65px;
+    background: linear-gradient(135deg, #56CCF2, #2F80ED); /* Modern gradient */
+    bottom: 0;
+    border-radius: 50%;
+    margin: auto;
+    line-height: 65px;
+    text-align: center;
+    font-size: 24px;
+    color: white;
+    font-weight: 500;
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15); /* Softer shadow */
+    transition: all 0.3s ease-in-out;
 }
+
+.floating-container .floating-button:hover {
+    background: linear-gradient(135deg, #2F80ED, #56CCF2); /* Reverse gradient on hover */
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    transform: scale(1.1); /* Slight zoom on hover */
+}
+
+/* Float element styling with updated color palette */
 .floating-container .float-element {
-  position: relative;
-  display: block;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  margin: 15px auto;
-  color: white;
-  font-weight: 500;
-  text-align: center;
-  line-height: 50px;
-  z-index: 1380;
-  opacity: 0;
-  -webkit-transform: translateY(100px);
-          transform: translateY(100px);
+    position: relative;
+    display: block;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    margin: 10px auto;
+    color: white;
+    font-weight: 500;
+    text-align: center;
+    line-height: 50px;
+    z-index: 1;
+    opacity: 0;
+    transform: translateY(100px);
+    transition: all 0.3s ease-in-out;
 }
+
+/* Individual float elements - Updated colors */
 .floating-container .float-element:nth-child(1) {
-  background: #0778e9;
+    background: #F2994A; /* Vibrant orange */
 }
 .floating-container .float-element:nth-child(2) {
-  background: #00ff2a;
+    background: #27AE60; /* Modern green */
 }
 .floating-container .float-element:nth-child(3) {
-  background: #000000;
+    background: #2D9CDB; /* Bright blue */
 }
 .floating-container .float-element:nth-child(4) {
-  background: #0088b2;
+    background: #EB5757; /* Fresh red */
 }
 .floating-container .float-element:nth-child(5) {
-  background: #23a8eb;
+    background: #9B51E0; /* Vibrant purple */
 }
 .floating-container .float-element:nth-child(6) {
-  background: #52015b;
+    background: #F2C94C; /* Warm yellow */
+}
+
+/* Keyframes for entry animation */
+@keyframes come-in {
+    0% {
+        opacity: 0;
+        transform: translateY(100px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

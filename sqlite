@@ -1,0 +1,36 @@
+import sqlite3
+
+# Connect to the SQLite database (or create it if it doesn't exist)
+conn = sqlite3.connect('test_database.db')
+
+# Create a cursor object to execute SQL queries
+cursor = conn.cursor()
+
+# Create a simple table
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY,
+        name TEXT NOT NULL,
+        age INTEGER
+    )
+''')
+
+# Insert some data into the table
+cursor.execute('''
+    INSERT INTO users (name, age)
+    VALUES ('Alice', 30), ('Bob', 24), ('Charlie', 29)
+''')
+
+# Commit the transaction
+conn.commit()
+
+# Query the data
+cursor.execute('SELECT * FROM users')
+
+# Fetch and print the results
+rows = cursor.fetchall()
+for row in rows:
+    print(row)
+
+# Close the connection
+conn.close()
